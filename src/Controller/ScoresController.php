@@ -19,6 +19,8 @@
         public function index(Request $request){
             $score = new Score();
 
+            $entityManager = $this->getDoctrine()->getManager();
+
             $form = $this->createFormBuilder($score)
                 ->add('name', TextType::class, array('attr' => array('class' => 'form-control')))
                 ->add('difficulty', TextType::class, array('attr' => array('class' => 'form-control')))
@@ -33,15 +35,20 @@
             if($form->isSubmitted() && $form->isValid()){
                 $score = $form->getData();
 
-                $entityManager = $this->getDoctrine()->getManager();
                 $score->setAuthorised(false);
 
                 $entityManager->persist($score);
 
                 $entityManager->flush();
             }
-            
-            $scores = $this->getDoctrine()->getRepository(Score::class)->findBy(array(), array('score' => 'DESC'));
+
+            $qb = $entityManager->createQueryBuilder()
+                ->select('s')
+                ->from(Score::class, 's')
+                ->where('s.authorised = 1')
+                ->orderBy('s.score', 'DESC');
+
+            $scores = $qb->getQuery()->getResult();
 
             return $this->render('scores/index.html.twig', array('admin' => false, 'scores' => $scores, 'form' => $form->createView()));
         }
