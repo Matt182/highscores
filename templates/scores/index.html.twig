@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+    {% block title %}High Scores{% endblock %}
+
+    {% block body %}
+    <h1>HIGH SCORES</h1>
+
+    {% if admin == true %}
+    <h3>Admin view</h3>
+    {% endif %}
+
+    {% if scores %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td>Position</td>
+                    <td>Name</td>
+                    <td>Difficulty</td>
+                    <td>Score</td>
+
+                    {% if admin %}
+                        <td>Actions</td>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in scores %}
+                    <tr>
+                        <td></td>
+                        <td>{{score.name}}</td>
+                        <td>{{score.difficulty}}</td>
+                        <td>{{score.score}}</td>
+                        {% if admin %}
+                            {% if score.authorised != 1 %}
+                                <td><a href="/authorise/{{ score.id }}" class="btn btn-dark">Authorise</a> | <a href="/delete/{{ score.id }}" class="btn btn-dark">Delete</a></td>
+                            {% else %}
+                                <td><a href="/delete/1" class="btn btn-dark">Delete</a></td>
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No scores to display</p>
+    {% endif %}
+
+    {% if admin == false %}
+        <h4>New Score:</h4>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        {{ form_end(form) }}
+    {% endif %}
+{% endblock %}
