@@ -6,6 +6,9 @@
 
     {% if admin == true %}
     <h3>Admin view</h3>
+    <a href="/">Exit Admin View</a>
+    {% else %}
+    <a href="/admin">Admin View</a>
     {% endif %}
 
     {% if scores %}
