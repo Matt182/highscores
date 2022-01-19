@@ -41,16 +41,9 @@
                 $entityManager->flush();
             }
             
-            $scores = $this->getDoctrine()->getRepository(Score::class)->findAll();
+            $scores = $this->getDoctrine()->getRepository(Score::class)->findBy(array(), array('score' => 'DESC'));
 
             return $this->render('scores/index.html.twig', array('admin' => false, 'scores' => $scores, 'form' => $form->createView()));
-        }
-
-        /**
-         * @Route("/score/new", name="new_score")
-         * @Method({"POST"})
-         */
-        public function new(Request $request){
         }
 
         /**
@@ -58,8 +51,35 @@
         * @Method({"GET"})
         */
         public function admin(){
-            $scores = $this->getDoctrine()->getRepository(Score::class)->findAll();
+            $scores = $this->getDoctrine()->getRepository(Score::class)->findBy(array(), array('score' => 'DESC'));
             return $this->render('scores/index.html.twig', array('admin' => true, 'scores' => $scores));
+        }
+
+        /**
+         * @Route("/score/delete/{id}")
+         * @Method({"DELETE"})
+         */
+        public function delete(Request $request, $id){
+            $score = $this->getDoctrine()->getRepository(Score::class)->find($id);
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($score);
+            $entityManager->flush();
+
+            $response = new Response();
+            $response->send();
+        }
+
+        /**
+         * @Route("/score/authorise/{id}")
+         */
+        public function authorise($id){
+            $score = $this->getDoctrine()->getRepository(Score::class)->find($id);
+            $entityManager = $this->getDoctrine()->getManager();
+            $score->setAuthorised(true);
+            $entityManager->flush();
+
+            return $this->redirect("/admin");
         }
 
         /**
