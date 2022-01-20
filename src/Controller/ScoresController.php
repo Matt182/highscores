@@ -46,7 +46,7 @@
             }
             
             //Get JSON data via API call
-            $url = $this->getParameter(app.apiurl);             //API URL. CHANGE IN .env FOR YOUR LOCAL INSTALL
+            $url = "highscores.test/score/data";                //API URL. CHANGE FOR YOUR LOCAL INSTALL
             $data = ['collection' => 'scores'];                 //Collection object
             $curl = curl_init($url);                            //Initializes a new cURL session
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);   //Set the CURLOPT_RETURNTRANSFER option to true
