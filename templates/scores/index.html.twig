@@ -11,17 +11,34 @@
     <a href="/admin">Admin View</a>
     {% endif %}
 
+    <br>
+    <hr>
+    Search Data by Name:
+    <br>
+    <input type="text" id="search-name" onkeyup="search('search-name')" placeholder="Search by name..."/>
+    <br>
+    <br>
+    Search Data by Difficulty:
+    <br>
+    <select id="search-difficulty" onchange="search('search-difficulty')">
+        <option value="Any">Any</option>
+        <option value="Easy">Easy</option>
+        <option value="Medium">Medium</option>
+        <option value="Hard">Hard</option>
+    </select>
+    <hr>
+
     {% if scores %}
         <table id="scores" class="table table-striped">
             <thead>
                 <tr>
-                    <td>Position</td>
-                    <td>Name</td>
-                    <td>Difficulty</td>
-                    <td>Score</td>
+                    <th onclick="sortTable(0)">Position <i class="fa fa-chevron-up" aria-hidden="true"></i> <i class="fa fa-chevron-down" aria-hidden="true"></i></th>
+                    <th onclick="sortTable(1)">Name <i class="fa fa-chevron-up" aria-hidden="true"></i> <i class="fa fa-chevron-down" aria-hidden="true"></i></th>
+                    <th onclick="sortTableDifficulty()">Difficulty <i class="fa fa-chevron-up" aria-hidden="true"></i> <i class="fa fa-chevron-down" aria-hidden="true"></i></th>
+                    <th onclick="sortTableScore()">Score <i class="fa fa-chevron-up" aria-hidden="true"></i> <i class="fa fa-chevron-down" aria-hidden="true"></i></th>
 
                     {% if admin %}
-                        <td>Actions</td>
+                        <th>Actions</th>
                     {% endif %}
                 </tr>
             </thead>
@@ -58,4 +75,42 @@
         {{ form_widget(form) }}
         {{ form_end(form) }}
     {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+<script>
+//Searching by field
+function search(field) {
+    // Declare variables
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById(field);
+    filter = input.value.toUpperCase();
+    table = document.getElementById("scores");
+    tr = table.getElementsByTagName("tr");
+  
+    // Loop through all table rows, and hide those who don't match the search query
+    for (i = 1; i < tr.length; i++) {
+        if(field == "search-name"){
+            td = tr[i].getElementsByTagName("td")[1];
+        }else if(field == 'search-difficulty'){
+          td = tr[i].getElementsByTagName("td")[2];
+        }
+        if (td) {
+            txtValue = td.textContent || td.innerText;
+
+            //console.log("Filter: " + filter);
+            //Show all rows if 'Any' has been selected
+            if(filter != "ANY"){
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }else{
+                tr[i].style.display = "";
+            }
+        }
+    }
+}
+</script>
 {% endblock %}
